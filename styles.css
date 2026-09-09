@@ -1,0 +1,463 @@
+/* =========================================================================
+   ARCADE RETRO — feuille de style
+   Tout est dessine en CSS pur : aucune image exterieure n'est utilisee.
+   Les couleurs sont regroupees en haut sous forme de "variables CSS"
+   (les noms commencant par --). On peut donc changer le theme facilement.
+   ========================================================================= */
+
+:root {
+  --fond:        #0d0b1e;   /* bleu nuit tres sombre : le fond general */
+  --fond-2:      #171334;   /* fond des cartes et des barres */
+  --fond-3:      #241d52;   /* couleur des bordures */
+  --texte:       #e8e6ff;   /* texte principal */
+  --texte-doux:  #9d97cf;   /* texte secondaire, moins lisible volontairement */
+  --rose:        #ff4d9d;
+  --cyan:        #38e8ff;
+  --jaune:       #ffd23f;
+  --vert:        #4ef08a;
+  --rouge:       #ff5c5c;
+
+  /* Police a chasse fixe, deja presente sur tous les systemes :
+     aucune police n'a besoin d'etre telechargee. */
+  --police: ui-monospace, "Cascadia Mono", "Segoe UI Mono", "Consolas",
+            "Liberation Mono", "Courier New", monospace;
+
+  /* Marges de securite pour les telephones a encoche */
+  --haut:   env(safe-area-inset-top, 0px);
+  --bas:    env(safe-area-inset-bottom, 0px);
+}
+
+/* --- Remise a zero des marges par defaut du navigateur --- */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body { height: 100%; }
+
+body {
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--police);
+  font-size: 16px;
+  line-height: 1.4;
+  overflow: hidden;               /* c'est l'application qui gere le defilement */
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;      /* empeche le "tirer pour rafraichir" sur mobile */
+}
+
+/* Fines rayures horizontales facon vieil ecran cathodique (pure decoration) */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;           /* la decoration ne bloque jamais les clics */
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.035) 0px,
+    rgba(255, 255, 255, 0.035) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  z-index: 50;
+}
+
+#app {
+  height: 100dvh;                 /* dvh = hauteur reellement visible sur mobile */
+  display: flex;
+  flex-direction: column;
+}
+
+/* =========================================================================
+   GESTION DES ECRANS
+   Un seul ecran est visible a la fois : celui qui porte la classe --actif.
+   ========================================================================= */
+.ecran { display: none; flex-direction: column; height: 100%; min-height: 0; }
+.ecran--actif { display: flex; }
+
+/* =========================================================================
+   ECRAN 1 — MENU PRINCIPAL
+   ========================================================================= */
+.entete {
+  padding: calc(var(--haut) + 28px) 20px 12px;
+  text-align: center;
+}
+
+.titre-jeu {
+  font-size: clamp(2rem, 12vw, 3.4rem);
+  line-height: 0.95;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+}
+.titre-jeu__ligne1, .titre-jeu__ligne2 { display: block; }
+.titre-jeu__ligne1 { color: var(--cyan); text-shadow: 0 0 18px rgba(56, 232, 255, 0.55); }
+.titre-jeu__ligne2 { color: var(--rose); text-shadow: 0 0 18px rgba(255, 77, 157, 0.55); }
+
+.sous-titre {
+  margin-top: 10px;
+  color: var(--texte-doux);
+  font-size: 0.8rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.liste-jeux {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;               /* la liste defile si l'ecran est petit */
+  padding: 8px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+/* Une carte = un jeu propose dans le menu */
+.carte {
+  background: var(--fond-2);
+  border: 2px solid var(--fond-3);
+  border-radius: 14px;
+  padding: 14px;
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  grid-template-areas:
+    "vignette infos"
+    "actions  actions";
+  gap: 12px;
+  align-items: center;
+}
+
+/* La vignette est un petit canvas dessine par app.js */
+.carte__vignette {
+  grid-area: vignette;
+  width: 64px; height: 64px;
+  border-radius: 10px;
+  background: #0a0819;
+  border: 2px solid var(--fond-3);
+  display: block;
+  image-rendering: pixelated;
+}
+
+.carte__infos  { grid-area: infos; min-width: 0; }
+.carte__nom    { font-size: 1.05rem; letter-spacing: 0.05em; }
+.carte__desc   { color: var(--texte-doux); font-size: 0.78rem; margin-top: 4px; }
+.carte__record { color: var(--jaune); font-size: 0.78rem; margin-top: 6px; }
+
+.carte__actions { grid-area: actions; display: flex; gap: 10px; }
+.carte__actions .btn { flex: 1; }
+
+/* =========================================================================
+   BOUTONS (style borne d'arcade : ombre "dure" qui s'enfonce au clic)
+   ========================================================================= */
+.btn {
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #0d0b1e;
+  background: var(--cyan);
+  border: none;
+  border-radius: 10px;
+  padding: 12px 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #1c9bb3;
+  transition: transform 0.06s ease, box-shadow 0.06s ease;
+  touch-action: manipulation;
+}
+.btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #1c9bb3; }
+
+.btn--fantome {
+  background: transparent;
+  color: var(--texte);
+  border: 2px solid var(--fond-3);
+  box-shadow: none;
+}
+.btn--fantome:active { transform: translateY(2px); background: var(--fond-2); }
+.btn--danger { color: var(--rouge); border-color: rgba(255, 92, 92, 0.4); }
+
+.btn-icone {
+  font-family: inherit;
+  font-size: 1rem;
+  color: var(--texte);
+  background: transparent;
+  border: 2px solid var(--fond-3);
+  border-radius: 10px;
+  width: 42px; height: 40px;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.btn-icone:active { background: var(--fond-2); }
+.btn-icone[aria-pressed="false"] { color: var(--texte-doux); opacity: 0.5; }
+
+.pied {
+  padding: 10px 16px calc(var(--bas) + 16px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  text-align: center;
+}
+.note { color: var(--texte-doux); font-size: 0.72rem; }
+.note--ok { color: var(--vert); }
+
+/* =========================================================================
+   ECRAN 2 — PARTIE EN COURS
+   ========================================================================= */
+.barre {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: calc(var(--haut) + 10px) 12px 10px;
+  border-bottom: 2px solid var(--fond-3);
+}
+.barre__titre {
+  flex: 1;
+  text-align: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cyan);
+}
+.barre__espace { width: 42px; }
+
+.hud {
+  display: flex;
+  justify-content: center;
+  gap: 18px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  font-size: 0.75rem;
+}
+.hud__bloc   { text-align: center; }
+.hud__label  { display: block; color: var(--texte-doux); letter-spacing: 0.12em; font-size: 0.62rem; }
+.hud__valeur { display: block; color: var(--jaune); font-size: 1rem; font-weight: 700; }
+
+.scene {
+  flex: 1;
+  min-height: 0;                  /* indispensable pour que le canvas puisse retrecir */
+  display: grid;
+  place-items: center;
+  padding: 6px;
+  position: relative;
+}
+
+canvas {
+  display: block;
+  background: #0a0819;
+  border: 2px solid var(--fond-3);
+  border-radius: 6px;
+  touch-action: none;             /* le canvas gere lui-meme les glissements du doigt */
+}
+
+/* Voile semi-transparent affiche par-dessus le jeu (pause, fin de partie) */
+.voile {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(13, 11, 30, 0.88);
+  text-align: center;
+  padding: 20px;
+}
+.voile[hidden] { display: none; }
+.voile__titre { font-size: 1.5rem; color: var(--rose); letter-spacing: 0.08em; }
+.voile__texte { color: var(--texte-doux); font-size: 0.85rem; }
+.voile__boutons { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+
+.aide {
+  text-align: center;
+  color: var(--texte-doux);
+  font-size: 0.68rem;
+  padding: 4px 12px;
+}
+
+/* --- Boutons tactiles --- */
+.commandes {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 14px calc(var(--bas) + 12px);
+  user-select: none;
+  -webkit-user-select: none;
+}
+.commandes__groupe { display: flex; gap: 10px; align-items: center; }
+
+.tactile {
+  font-family: inherit;
+  font-size: 1.3rem;
+  color: var(--texte);
+  background: var(--fond-2);
+  border: 2px solid var(--fond-3);
+  border-radius: 14px;
+  width: 62px; height: 58px;
+  cursor: pointer;
+  touch-action: none;
+  display: grid;
+  place-items: center;
+}
+.tactile.tactile--enfonce {
+  background: var(--fond-3);
+  border-color: var(--cyan);
+  transform: translateY(2px);
+}
+.tactile--feu { color: var(--rose); border-color: rgba(255, 77, 157, 0.5); font-size: 0.8rem; }
+
+/* Croix directionnelle (jeu du serpent), disposee en croix sur 2 rangees */
+.dpad {
+  display: grid;
+  grid-template-columns: repeat(3, 54px);
+  grid-template-rows: repeat(2, 50px);
+  gap: 6px;
+  margin: 0 auto;
+}
+.dpad .tactile { width: 54px; height: 50px; font-size: 1.2rem; }
+.dpad__haut   { grid-column: 2; grid-row: 1; }
+.dpad__gauche { grid-column: 1; grid-row: 2; }
+.dpad__bas    { grid-column: 2; grid-row: 2; }
+.dpad__droite { grid-column: 3; grid-row: 2; }
+
+/* Les boutons tactiles ne s'affichent que sur les appareils tactiles :
+   la classe .tactile-actif est ajoutee par app.js au demarrage.
+   Sur un ordinateur classique, on joue au clavier et l'aide reste visible. */
+body:not(.tactile-actif) .commandes { display: none; }
+
+/* =========================================================================
+   ECRAN 3 — TABLEAU DES MEILLEURS SCORES
+   ========================================================================= */
+.onglets { display: flex; gap: 6px; padding: 12px 12px 0; }
+
+.onglet {
+  flex: 1;
+  font-family: inherit;
+  font-size: 0.7rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--texte-doux);
+  background: var(--fond-2);
+  border: 2px solid var(--fond-3);
+  border-bottom: none;
+  border-radius: 10px 10px 0 0;
+  padding: 10px 4px;
+  cursor: pointer;
+}
+.onglet[aria-selected="true"] {
+  color: var(--fond);
+  background: var(--cyan);
+  border-color: var(--cyan);
+}
+
+.scores {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 12px;
+  border-top: 2px solid var(--fond-3);
+}
+
+.ligne-score {
+  display: grid;
+  grid-template-columns: 32px 1fr auto;
+  gap: 10px;
+  align-items: center;
+  padding: 10px 12px;
+  background: var(--fond-2);
+  border: 2px solid var(--fond-3);
+  border-radius: 10px;
+  margin-bottom: 8px;
+}
+.ligne-score--podium   { border-color: var(--jaune); }
+.ligne-score--surligne { border-color: var(--vert); box-shadow: 0 0 12px rgba(78, 240, 138, 0.35); }
+.ligne-score__rang     { color: var(--texte-doux); font-size: 0.9rem; text-align: center; }
+.ligne-score--podium .ligne-score__rang { color: var(--jaune); font-weight: 700; }
+.ligne-score__pseudo   { font-size: 0.95rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ligne-score__date     { display: block; color: var(--texte-doux); font-size: 0.68rem; }
+.ligne-score__points   { color: var(--jaune); font-weight: 700; font-size: 1rem; }
+
+.vide { text-align: center; color: var(--texte-doux); font-size: 0.8rem; padding: 40px 20px; }
+
+/* =========================================================================
+   FENETRE MODALE — saisie du pseudo en fin de partie
+   ========================================================================= */
+.modale {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(5, 4, 12, 0.85);
+}
+.modale[hidden] { display: none; }
+
+.modale__boite {
+  width: 100%;
+  max-width: 340px;
+  background: var(--fond-2);
+  border: 2px solid var(--cyan);
+  border-radius: 16px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.modale__titre { font-size: 1.2rem; color: var(--rose); letter-spacing: 0.05em; }
+.modale__score { font-size: 1.6rem; color: var(--jaune); font-weight: 700; }
+.modale__label { font-size: 0.72rem; color: var(--texte-doux); text-align: left; }
+
+.champ {
+  font-family: inherit;
+  font-size: 1.1rem;
+  letter-spacing: 0.1em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--texte);
+  background: #0a0819;
+  border: 2px solid var(--fond-3);
+  border-radius: 10px;
+  padding: 12px;
+  width: 100%;
+}
+.champ:focus { outline: none; border-color: var(--cyan); }
+
+.modale__boutons { display: flex; gap: 10px; }
+.modale__boutons .btn { flex: 1; }
+
+/* =========================================================================
+   ADAPTATIONS A LA TAILLE DE L'ECRAN
+   ========================================================================= */
+
+/* Grand ecran : l'application reste dans une colonne centree */
+@media (min-width: 620px) {
+  #app { max-width: 560px; margin: 0 auto; width: 100%; }
+}
+
+/* Ecran peu haut (telephone tenu a l'horizontale) : on comprime tout */
+@media (max-height: 560px) {
+  .entete { padding-top: calc(var(--haut) + 10px); }
+  .titre-jeu { font-size: 2rem; }
+  .hud { padding: 4px 12px; }
+  .aide { display: none; }   /* on gagne de la place pour le jeu */
+  .tactile { height: 46px; }
+  .dpad { grid-template-rows: repeat(2, 42px); }
+  .dpad .tactile { height: 42px; }
+}
+
+/* Respect du reglage systeme « reduire les animations » */
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  body::after { display: none; }
+}
+
+/* Ecran etroit (petits telephones) : on reduit les boutons tactiles pour
+   qu'une rangee de cinq tienne sans deborder de l'ecran. */
+@media (max-width: 400px) {
+  .commandes { padding-left: 8px; padding-right: 8px; gap: 6px; }
+  .commandes__groupe { gap: 6px; }
+  .tactile { width: 52px; height: 54px; font-size: 1.15rem; }
+  .tactile--feu { font-size: 0.7rem; }
+  .dpad { grid-template-columns: repeat(3, 50px); }
+  .dpad .tactile { width: 50px; }
+}

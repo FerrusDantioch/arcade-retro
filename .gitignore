@@ -1,0 +1,8 @@
+# Fichiers temporaires des editeurs et des systemes
+.DS_Store
+Thumbs.db
+*.log
+.vscode/
+.idea/
+
+# Rien d'autre a ignorer : l'application n'a ni dependance ni etape de compilation.

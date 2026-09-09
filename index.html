@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <!-- viewport-fit=cover : permet de gerer les encoches des telephones -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0d0b1e">
+  <meta name="description" content="Arcade Retro : trois mini-jeux d'arcade originaux, jouables hors ligne.">
+  <title>Arcade Rétro</title>
+
+  <!-- Fichiers de l'application progressive (PWA) -->
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Arcade Rétro">
+
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<div id="app">
+
+  <!-- ================= ECRAN 1 : LE MENU PRINCIPAL ================= -->
+  <section id="ecran-menu" class="ecran ecran--actif">
+    <header class="entete">
+      <h1 class="titre-jeu">
+        <span class="titre-jeu__ligne1">ARCADE</span>
+        <span class="titre-jeu__ligne2">RÉTRO</span>
+      </h1>
+      <p class="sous-titre">3 mini-jeux · 100&nbsp;% hors ligne</p>
+    </header>
+
+    <!-- La liste des jeux est construite par app.js dans ce conteneur -->
+    <div id="liste-jeux" class="liste-jeux"></div>
+
+    <footer class="pied">
+      <button id="btn-installer" class="btn btn--fantome" hidden>Installer l'application</button>
+      <p id="etat-hors-ligne" class="note">Chargement…</p>
+    </footer>
+  </section>
+
+  <!-- ================= ECRAN 2 : LA PARTIE EN COURS ================= -->
+  <section id="ecran-jeu" class="ecran ecran--jeu">
+    <div class="barre">
+      <button class="btn-icone" data-quitter aria-label="Revenir au menu">◀</button>
+      <span id="jeu-titre" class="barre__titre">Jeu</span>
+      <button class="btn-icone" id="btn-son" aria-label="Activer ou couper le son">♪</button>
+      <button class="btn-icone" id="btn-pause" aria-label="Mettre en pause">❚❚</button>
+    </div>
+
+    <!-- Tableau de bord : score, niveau, vies… rempli par app.js -->
+    <div id="jeu-hud" class="hud"></div>
+
+    <!-- La scene contient le canvas, dimensionne automatiquement par app.js -->
+    <div id="jeu-scene" class="scene">
+      <canvas id="canvas" width="320" height="480"></canvas>
+
+      <!-- Voile affiche par-dessus le jeu (pause, fin de partie) -->
+      <div id="jeu-voile" class="voile" hidden>
+        <p id="voile-titre" class="voile__titre">Pause</p>
+        <p id="voile-texte" class="voile__texte"></p>
+        <div class="voile__boutons">
+          <button id="btn-reprendre" class="btn">Reprendre</button>
+          <button id="btn-rejouer" class="btn" hidden>Rejouer</button>
+          <button class="btn btn--fantome" data-quitter>Menu</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Aide clavier (ordinateur) et boutons tactiles (mobile) -->
+    <p id="jeu-aide" class="aide"></p>
+    <div id="jeu-commandes" class="commandes"></div>
+  </section>
+
+  <!-- ================= ECRAN 3 : LES MEILLEURS SCORES ================= -->
+  <section id="ecran-scores" class="ecran">
+    <div class="barre">
+      <button class="btn-icone" data-quitter aria-label="Revenir au menu">◀</button>
+      <span class="barre__titre">Meilleurs scores</span>
+      <span class="barre__espace"></span>
+    </div>
+
+    <!-- Un onglet par jeu, construit par app.js -->
+    <div id="onglets-scores" class="onglets" role="tablist"></div>
+    <div id="scores-liste" class="scores"></div>
+
+    <div class="pied">
+      <button id="btn-effacer-scores" class="btn btn--fantome btn--danger">Effacer ces scores</button>
+    </div>
+  </section>
+
+</div>
+
+<!-- ================= FENETRE : SAISIE DU PSEUDO ================= -->
+<div id="modale-pseudo" class="modale" hidden>
+  <form id="form-pseudo" class="modale__boite" autocomplete="off">
+    <h2 class="modale__titre">Partie terminée&nbsp;!</h2>
+    <p class="modale__score"><span id="modale-score">0</span> points</p>
+    <label class="modale__label" for="champ-pseudo">Votre pseudo (12 caractères max)</label>
+    <input id="champ-pseudo" class="champ" type="text" maxlength="12" required
+           placeholder="JOUEUR" spellcheck="false" autocapitalize="characters">
+    <div class="modale__boutons">
+      <button type="submit" class="btn">Enregistrer</button>
+      <button type="button" id="btn-annuler-pseudo" class="btn btn--fantome">Passer</button>
+    </div>
+  </form>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
