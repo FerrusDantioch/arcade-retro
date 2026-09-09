@@ -1,5 +1,7 @@
 # Arcade Rétro
 
+**▶ Jouer en ligne : https://ferrusdantioch.github.io/arcade-retro/**
+
 Trois mini-jeux d'arcade **originaux**, réunis dans une application web installable
 qui fonctionne **entièrement hors connexion**.
 
