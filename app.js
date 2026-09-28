@@ -1844,6 +1844,15 @@ function installerServiceWorker() {
     .catch(() => {
       note.textContent = 'Mode hors ligne indisponible.';
     });
+
+  /* Par defaut, le navigateur peut effacer de lui-meme la copie hors ligne
+     (manque de place, jeu peu utilise). persist() lui demande de la garder.
+     S'il refuse, rien ne change : le jeu marche comme avant. */
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persisted()
+      .then((dejaPersistant) => dejaPersistant || navigator.storage.persist())
+      .catch(() => {});
+  }
 }
 
 /* Proposition d'installation sur l'ecran d'accueil (Android, Chrome, Edge…) */
