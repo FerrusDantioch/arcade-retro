@@ -183,6 +183,17 @@ const Scores = {
       .slice(0, this.MAXIMUM);
   },
 
+  /**
+   * Ce score merite-t-il une place dans le top 10 ? Un score nul n'est
+   * jamais enregistre, et un score egal au dernier du classement ne le
+   * deloge pas (le plus ancien reste devant).
+   */
+  entreDansLeClassement(idJeu, score) {
+    if (!(score > 0)) return false;
+    const l = this.liste(idJeu);
+    return l.length < this.MAXIMUM || score > l[l.length - 1].score;
+  },
+
   /** Meilleur score d'un jeu (0 si aucune partie jouee). */
   meilleur(idJeu) {
     const l = this.liste(idJeu);
@@ -497,7 +508,7 @@ const Moteur = {
     this.enPause = valeur;
     Entrees.vider();
     if (this.enPause) {
-      this.afficherVoile('Pause', 'La partie est arretee.', { reprendre: true, rejouer: false });
+      this.afficherVoile('Pause', 'La partie est arrêtée.', { reprendre: true, rejouer: false });
     } else {
       $('#jeu-voile').hidden = true;
       this.tempsPrecedent = performance.now();   // evite un saut de temps
@@ -519,11 +530,16 @@ const Moteur = {
     this.fini = true;
     Entrees.vider();
     Sons.effet('fin');
-    this.afficherVoile('Partie terminée', score + ' points', { reprendre: false, rejouer: true });
-    /* Petit delai : le joueur voit d'abord son ecran de fin. On retient
-       l'identifiant tout de suite, au cas ou il quitterait entre-temps. */
     const idJeu = this.jeu.id;
+    /* On ne demande le pseudo que si le score entre dans le top 10 :
+       sinon le joueur le taperait pour rien. */
+    const classe = Scores.entreDansLeClassement(idJeu, score);
+    const detail = (!classe && score > 0) ? ' (hors des 10 meilleurs scores)' : '';
+    this.afficherVoile('Partie terminée', score + ' points' + detail, { reprendre: false, rejouer: true });
     this.annulerMinuteurPseudo();
+    if (!classe) return;
+    /* Petit delai : le joueur voit d'abord son ecran de fin. L'identifiant
+       du jeu est retenu tout de suite, au cas ou il quitterait entre-temps. */
     this.minuteurPseudo = setTimeout(() => {
       this.minuteurPseudo = 0;
       ModalePseudo.ouvrir(idJeu, score);
