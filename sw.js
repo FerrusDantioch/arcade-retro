@@ -10,7 +10,7 @@
    version ci-dessous : l'ancien cache sera automatiquement supprime.
    ========================================================================= */
 
-const VERSION = 'arcade-retro-v1';
+const VERSION = 'arcade-retro-v2';
 
 /* Liste de tout ce qui doit etre disponible hors ligne. */
 const FICHIERS = [
@@ -28,7 +28,11 @@ const FICHIERS = [
 self.addEventListener('install', (evenement) => {
   evenement.waitUntil(
     caches.open(VERSION)
-      .then((cache) => cache.addAll(FICHIERS))
+      /* { cache: 'reload' } : chaque fichier est repris sur le serveur, sans
+         passer par le petit cache du navigateur (GitHub Pages le garde
+         10 minutes). Sinon, deux mises a jour publiees coup sur coup
+         pourraient ranger d'anciens fichiers sous la nouvelle version. */
+      .then((cache) => cache.addAll(FICHIERS.map((f) => new Request(f, { cache: 'reload' }))))
       /* La nouvelle version prend la main sans attendre la fermeture des onglets. */
       .then(() => self.skipWaiting())
   );
