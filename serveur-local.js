@@ -32,11 +32,19 @@ const TYPES = {
 http.createServer((requete, reponse) => {
   /* On retire les parametres eventuels puis on securise le chemin demande
      pour qu'il reste a l'interieur du dossier de l'application. */
-  const demande = decodeURIComponent(requete.url.split('?')[0]);
+  let demande;
+  try {
+    demande = decodeURIComponent(requete.url.split('?')[0]);
+  } catch (e) {
+    /* Adresse mal formee (« %E0 » seul, par exemple) : on refuse poliment
+       au lieu de laisser le serveur s'arreter net. */
+    reponse.writeHead(400).end('Adresse invalide');
+    return;
+  }
   const chemin = demande === '/' ? '/index.html' : demande;
   const fichier = path.join(RACINE, chemin);
 
-  if (!fichier.startsWith(RACINE)) {
+  if (fichier !== RACINE && !fichier.startsWith(RACINE + path.sep)) {
     reponse.writeHead(403).end('Accès refusé');
     return;
   }
