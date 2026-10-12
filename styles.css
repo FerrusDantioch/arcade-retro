@@ -197,9 +197,18 @@ body::after {
 .note { color: var(--texte-doux); font-size: 0.72rem; }
 .note--ok { color: var(--vert); }
 
-/* Section « A propos » du pied de page : petite et discrete, comme les notes */
-.a-propos { display: flex; flex-direction: column; gap: 4px; }
-.a-propos__titre { color: var(--texte); font-size: 0.8rem; font-weight: normal; }
+/* Section « A propos » du pied de page, repliee par defaut : une seule ligne
+   discrete, comme les notes. Le petit triangle du navigateur indique qu'elle
+   se deplie ; le marge interne agrandit la zone a toucher sans grossir le texte. */
+.a-propos__titre {
+  cursor: pointer;
+  padding: 13px 12px;
+  color: var(--texte);
+  font-size: 0.8rem;
+  list-style-position: inside;
+}
+.a-propos__h2 { display: inline; font-size: inherit; font-weight: normal; }
+.a-propos .note { margin-top: 4px; }
 /* Le lien garde la couleur du texte autour (juste souligne) ; une adresse trop
    longue pour un petit ecran passe a la ligne au lieu de deborder. */
 .a-propos__lien { color: inherit; text-underline-offset: 3px; overflow-wrap: anywhere; }
