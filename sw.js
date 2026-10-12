@@ -10,7 +10,7 @@
    version ci-dessous : l'ancien cache sera automatiquement supprime.
    ========================================================================= */
 
-const VERSION = 'arcade-retro-v3';
+const VERSION = 'arcade-retro-v4';
 
 /* Liste de tout ce qui doit etre disponible hors ligne. */
 const FICHIERS = [
