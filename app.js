@@ -1860,6 +1860,22 @@ function installerServiceWorker() {
     .catch(() => {
       note.textContent = 'Mode hors ligne indisponible.';
     });
+
+  /* Par defaut, le navigateur peut effacer de lui-meme la copie hors ligne
+     (manque de place, jeu peu utilise). persist() lui demande de la garder.
+     Certains navigateurs (Firefox) affichent alors une fenetre d'autorisation :
+     pour ne jamais en faire surgir une au demarrage, on ne demande que si le
+     navigateur a deja repondu « accorde » (Chrome, pour une appli installee,
+     sans rien afficher). Sinon, on renonce en silence. */
+  if (navigator.storage && navigator.storage.persist && navigator.permissions) {
+    navigator.storage.persisted()
+      .then((dejaPersistant) => {
+        if (dejaPersistant) return;
+        return navigator.permissions.query({ name: 'persistent-storage' })
+          .then((etat) => { if (etat.state === 'granted') return navigator.storage.persist(); });
+      })
+      .catch(() => {});
+  }
 }
 
 /* Proposition d'installation sur l'ecran d'accueil (Android, Chrome, Edge…) */
