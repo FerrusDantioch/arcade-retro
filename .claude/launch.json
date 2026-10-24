@@ -2,7 +2,7 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "arcade",
+      "name": "omni-arcade",
       "runtimeExecutable": "node",
       "runtimeArgs": ["serveur-local.js"],
       "port": 5180

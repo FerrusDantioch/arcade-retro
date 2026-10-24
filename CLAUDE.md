@@ -1,4 +1,4 @@
-# Arcade Rétro — notes pour Claude
+# Omni-Arcade — notes pour Claude
 
 PWA de trois mini-jeux d'arcade en **HTML/CSS/JS pur, sans aucune dépendance ni
 étape de compilation**. Code et commentaires en français : conserver ce niveau
@@ -11,7 +11,7 @@ Après toute modification d'un fichier **mis en cache** (`index.html`, `app.js`,
 `sw.js` :
 
 ```js
-const VERSION = 'arcade-retro-v1';   // → v2
+const VERSION = 'omni-arcade-v8';   // → v9
 ```
 
 Sans ce changement, le navigateur ne détecte aucun service worker différent, ne
@@ -37,4 +37,4 @@ jamais par double-clic sur `index.html` (`file://`). Les jeux tourneront quand
 même, mais ni l'installation ni le mode hors ligne.
 
 Déploiement : GitHub Pages, branche `main`, racine →
-https://ferrusdantioch.github.io/arcade-retro/
+https://ferrusdantioch.github.io/omni-arcade/

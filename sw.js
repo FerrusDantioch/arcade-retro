@@ -1,5 +1,5 @@
 /* =========================================================================
-   ARCADE RETRO — service worker
+   OMNI-ARCADE — service worker
    -------------------------------------------------------------------------
    Un service worker est un petit programme que le navigateur garde en
    memoire, a cote de la page. Son role ici est simple : conserver une copie
@@ -10,7 +10,12 @@
    version ci-dessous : l'ancien cache sera automatiquement supprime.
    ========================================================================= */
 
-const VERSION = 'arcade-retro-v7';
+const VERSION = 'omni-arcade-v8';
+
+/* Débuts de nom de NOS caches (« arcade-retro- » : ancien nom de
+   l'application). Toutes les applications de ferrusdantioch.github.io
+   partagent la même liste de caches : on ne supprime que les nôtres. */
+const PREFIXES_A_NOUS = ['omni-arcade-', 'arcade-retro-'];
 
 /* Liste de tout ce qui doit etre disponible hors ligne. */
 const FICHIERS = [
@@ -38,12 +43,12 @@ self.addEventListener('install', (evenement) => {
   );
 });
 
-/* --- 2. Activation : on efface les caches des versions precedentes ------ */
+/* --- 2. Activation : on efface NOS caches des versions precedentes ------ */
 self.addEventListener('activate', (evenement) => {
   evenement.waitUntil(
     caches.keys()
       .then((noms) => Promise.all(
-        noms.filter((nom) => nom !== VERSION).map((nom) => caches.delete(nom))
+        noms.filter((nom) => nom !== VERSION && PREFIXES_A_NOUS.some((p) => nom.startsWith(p))).map((nom) => caches.delete(nom))
       ))
       .then(() => self.clients.claim())
   );

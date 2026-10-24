@@ -64,5 +64,5 @@ http.createServer((requete, reponse) => {
     reponse.end(contenu);
   });
 }).listen(PORT, () => {
-  console.log('Arcade Rétro : http://localhost:' + PORT);
+  console.log('Omni-Arcade : http://localhost:' + PORT);
 });

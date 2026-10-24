@@ -1,5 +1,5 @@
 /* =========================================================================
-   ARCADE RETRO — logique de l'application
+   OMNI-ARCADE — logique de l'application
    -------------------------------------------------------------------------
    Ce fichier contient TOUT le code de l'application :
      1. de petites fonctions utilitaires

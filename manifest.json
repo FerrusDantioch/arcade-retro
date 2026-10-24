@@ -1,6 +1,7 @@
 {
-  "name": "Arcade Rétro",
-  "short_name": "Arcade",
+  "name": "Omni-Arcade",
+  "id": "/omni-arcade/",
+  "short_name": "Omni-Arcade",
   "description": "Trois mini-jeux d'arcade originaux, jouables hors ligne : Chute de Blocs, Serpent Vorace et Défense Orbitale.",
   "lang": "fr",
   "dir": "ltr",

@@ -1,6 +1,6 @@
-# Arcade Rétro
+# Omni-Arcade
 
-**▶ Jouer en ligne : https://ferrusdantioch.github.io/arcade-retro/**
+**▶ Jouer en ligne : https://ferrusdantioch.github.io/omni-arcade/**
 
 Trois mini-jeux d'arcade **originaux**, réunis dans une application web installable
 qui fonctionne **entièrement hors connexion**.
@@ -85,7 +85,7 @@ Quelques réglages faciles à retrouver dans `app.js` :
 Après avoir modifié un fichier, changez le numéro de version en haut de `sw.js` :
 
 ```js
-const VERSION = 'arcade-retro-v2';
+const VERSION = 'omni-arcade-v9';
 ```
 
 L'ancienne copie mise en cache est alors automatiquement remplacée chez les
